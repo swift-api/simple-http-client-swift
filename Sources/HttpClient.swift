@@ -12,7 +12,8 @@
 */
 
 import Foundation
-import SimpleLogger
+import HeliumLogger
+import LoggerAPI
 import KituraNet
 
 /// An alias for a network request completion handler, receives back error, status, headers and data
@@ -22,8 +23,6 @@ internal let NOOPNetworkRequestCompletionHandler:NetworkRequestCompletionHandler
 
 /// Use HttpClient to make Http requests
 public class HttpClient{
-	
-	public static let logger = Logger(forName: "HttpClient")
 
 	/**
 	Send a GET request
@@ -107,7 +106,7 @@ private extension HttpClient {
 			}
 		}
 		
-		logger.debug("Sending \(method) request to \(resource.uri)")
+		Log.debug("Sending \(method) request to \(resource.uri)")
 			
 		if let data = data {
 			request.end(data)
@@ -136,13 +135,13 @@ private extension HttpClient {
 
 			switch response.status {
 			case 401:
-				logger.error(String(HttpError.Unauthorized))
+				Log.error(String(HttpError.Unauthorized))
 				return completionHandler(error: HttpError.Unauthorized, status: response.status, headers: headers, data: responseData)
 			case 404:
-				logger.error(String(HttpError.NotFound))
+				Log.error(String(HttpError.NotFound))
 				return completionHandler(error: HttpError.NotFound, status: response.status, headers: headers, data: responseData)
 			case 400 ... 599:
-				logger.error(String(HttpError.ServerError))
+				Log.error(String(HttpError.ServerError))
 				return completionHandler(error: HttpError.ServerError, status: response.status, headers: headers, data: responseData)
 			default:
 				return completionHandler(error: nil, status: response.status, headers: headers, data: responseData)
